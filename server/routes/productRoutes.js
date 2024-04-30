@@ -1,14 +1,39 @@
-// productRoutes.js
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/product');
 
 router.get('/', async (req, res) => {
     try {
-        console.log('Fetching products...');
-        const products = await Product.find().limit(10);
-        console.log('Products fetched:', products);
-        res.json(products);
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 10;
+        let sortBy = req.query.sortBy || 'name'; // Default sorting by name
+        const search = req.query.search || ''; // Default empty search query
+
+        const skip = (page - 1) * pageSize;
+
+        const regex = new RegExp(search, 'i'); // Case-insensitive search
+
+        const totalProducts = await Product.countDocuments({ name: regex });
+
+        const totalPages = Math.ceil(totalProducts / pageSize);
+
+        let sortDirection = 1; // Default sort direction (ascending)
+        if (sortBy.endsWith('_desc')) {
+            sortBy = sortBy.slice(0, -5); 
+            sortDirection = -1; 
+        }
+
+        let sortOptions = {};
+        if (sortBy === 'price' || sortBy === 'name') {
+            sortOptions[sortBy] = sortDirection;
+        }
+
+        const products = await Product.find({ name: regex })
+            .sort(sortOptions)
+            .skip(skip)
+            .limit(pageSize);
+
+        res.json({ products, totalPages });
     } catch (error) {
         console.error('Error fetching products:', error);
         res.status(500).json({ message: 'Server error' });

@@ -61,10 +61,5 @@ const loginUser = async (req, res) => {
     }
   };
   
-  // Controller function for user logout
-  const logoutUser = async (req, res) => {
-    // Logout logic (optional)
-  };
-  
 
-module.exports = { registerUser, loginUser, logoutUser };
+module.exports = { registerUser, loginUser };

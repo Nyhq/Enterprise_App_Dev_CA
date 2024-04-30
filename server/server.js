@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const productRoutes = require('./routes/productRoutes'); // Import product routes
+const productRoutes = require('./routes/productRoutes');
+const aboutRoutes = require('./routes/aboutRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,19 +12,20 @@ const uri = "mongodb+srv://seanbreen98:6RyYFx5v95oBW1Js@eadca.xjzmsou.mongodb.ne
 
 // Connect to MongoDB Atlas
 mongoose.connect(uri, {
-    dbName: 'test'
+  dbName: 'test'
 })
-    .then(() => console.log('Connected to MongoDB Atlas'))
-    .catch(err => console.error('Error connecting to MongoDB Atlas:', err));
+.then(() => console.log('Connected to MongoDB Atlas'))
+.catch(err => console.error('Error connecting to MongoDB Atlas:', err));
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/products', productRoutes); // Use product routes
+app.use('/products', productRoutes);
+app.use('/about', aboutRoutes);
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
